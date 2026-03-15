@@ -4,72 +4,53 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { messages } = req.body || {};
+    const { message } = req.body || {};
 
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      return res.status(400).json({ error: "Faltan los mensajes" });
+    if (!message) {
+      return res.status(400).json({ error: "Falta el mensaje" });
     }
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://paranati.vercel.app",
-        "X-Title": "Para Nati"
-      },
-      body: JSON.stringify({
-        model: "openrouter/free",
-        messages: [
-          {
-            role: "system",
-            content: `Eres un asistente especializado en farmacia y parafarmacia.
-
-Tu función es ayudar a estudiantes y usuarios a entender conceptos de:
-- dispensación de productos farmacéuticos
-- productos parafarmacéuticos
-- dermocosmética
-- nutrición y complementos
-- fitoterapia
-- puericultura
-- higiene
-- primeros auxilios
-- promoción de la salud
-- anatomofisiología básica
-- oficina de farmacia
-- operaciones básicas de laboratorio
-- formulación magistral
-
-Reglas:
-- Responde siempre en español.
-- Explica de forma clara, ordenada y fácil de entender.
-- Sé útil para estudio y repaso.
-- Si el tema puede requerir diagnóstico, tratamiento médico o urgencia, aclara que debe consultarse a un profesional sanitario.
-- No inventes dosis ni indicaciones peligrosas.
-- Si te preguntan algo sanitario delicado, responde con prudencia.
-- Usa un tono amable, profesional y educativo.`
-          },
-          ...messages
-        ]
-      })
-    });
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://paranati.vercel.app",
+          "X-Title": "Paranati",
+        },
+        body: JSON.stringify({
+          model: "mistralai/mistral-7b-instruct:free",
+          messages: [
+            {
+              role: "user",
+              content: message,
+            },
+          ],
+        }),
+      }
+    );
 
     const data = await response.json();
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error: data?.error?.message || "Error al llamar a OpenRouter"
+        error: data?.error?.message || "Error OpenRouter",
+        details: data,
       });
     }
 
     const reply =
       data?.choices?.[0]?.message?.content ||
-      "No hubo respuesta del modelo.";
+      "No hubo respuesta";
 
     return res.status(200).json({ reply });
+
   } catch (error) {
     return res.status(500).json({
-      error: "Error interno del servidor"
+      error: "Error interno",
+      details: error.message,
     });
   }
 }
