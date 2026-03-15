@@ -47,6 +47,7 @@ Si una consulta requiere diagnóstico o atención médica, indícalo con prudenc
       "No hubo respuesta del modelo.";
 
     return res.status(200).json({ reply });
+
   } catch (error) {
     return res.status(500).json({
       error: "Error interno del servidor"
