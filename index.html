@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Nati — Aprende Parafarmacia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --sage: #7a9e7e;
+    --sage-light: #a8c5ac;
+    --sage-dark: #4a7050;
+    --terracotta: #c4714a;
+    --charcoal: #2c2c2c;
+    --warm-gray: #6b6560;
+    --light-gray: #ede9e3;
+    --white: #ffffff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--charcoal); min-height:100vh; }
+
+  /* NAV */
+  nav {
+    background:var(--white); border-bottom:2px solid var(--light-gray);
+    padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between;
+    height:60px; position:sticky; top:0; z-index:100;
+    box-shadow:0 2px 12px rgba(0,0,0,0.06);
+  }
+  .logo { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--sage-dark); }
+  .logo span { color:var(--terracotta); }
+  .nav-tabs { display:flex; gap:4px; }
+  .nav-tab {
+    padding:.45rem .85rem; border:none; background:none; cursor:pointer;
+    font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:500;
+    color:var(--warm-gray); border-radius:8px; transition:all .2s;
+  }
+  .nav-tab:hover { background:var(--light-gray); color:var(--charcoal); }
+  .nav-tab.active { background:var(--sage); color:white; }
+
+  /* PAGES */
+  .page { display:none; }
+  .page.active { display:block; }
+
+  /* HERO */
+  .hero {
+    background:linear-gradient(135deg,var(--sage-dark),var(--sage),var(--sage-light));
+    color:white; padding:3.5rem 2rem 3rem; text-align:center;
+  }
+  .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,5vw,3rem); font-weight:700; margin-bottom:1rem; }
+  .hero p { font-size:1rem; opacity:.9; max-width:520px; margin:0 auto 2rem; line-height:1.6; }
+  .hero-cards { display:flex; gap:.85rem; justify-content:center; flex-wrap:wrap; }
+  .hero-card {
+    background:rgba(255,255,255,.15); backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.3); border-radius:16px;
+    padding:1.1rem 1.4rem; cursor:pointer; color:white; min-width:120px;
+    transition:all .3s; font-family:'DM Sans',sans-serif; border:none;
+  }
+  .hero-card:hover { background:rgba(255,255,255,.25); transform:translateY(-3px); }
+  .hero-card .icon { font-size:1.8rem; display:block; margin-bottom:.4rem; }
+  .hero-card span { font-size:.85rem; font-weight:500; }
+
+  /* HOME GRID */
+  .home-section { padding:2.5rem 2rem; max-width:900px; margin:0 auto; }
+  .home-section h2 { font-family:'Playfair Display',serif; font-size:1.6rem; margin-bottom:.5rem; }
+  .home-section p { color:var(--warm-gray); margin-bottom:1.5rem; }
+  .cat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:.85rem; }
+  .cat-card {
+    padding:1.1rem; border:2px solid var(--light-gray); border-radius:14px; background:var(--white);
+    cursor:pointer; text-align:left; font-family:'DM Sans',sans-serif; transition:all .25s;
+  }
+  .cat-card:hover { border-color:var(--sage-light); box-shadow:0 4px 20px rgba(122,158,126,.15); transform:translateY(-2px); }
+  .cat-card h4 { font-size:.95rem; font-weight:600; margin-bottom:.3rem; }
+  .cat-card p { font-size:.82rem; color:var(--warm-gray); }
+
+  /* THEORY LAYOUT */
+  .theory-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 60px); }
+  .sidebar {
+    background:var(--white); border-right:2px solid var(--light-gray);
+    padding:1.25rem .75rem; position:sticky; top:60px; height:calc(100vh - 60px); overflow-y:auto;
+  }
+  .sidebar-label { font-size:.7rem; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--warm-gray); margin-bottom:.75rem; padding:0 .5rem; }
+  .cat-btn {
+    display:block; width:100%; padding:.7rem .75rem; border:none; background:none; cursor:pointer;
+    font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:400; color:var(--charcoal);
+    border-radius:10px; transition:all .2s; text-align:left; margin-bottom:2px;
+  }
+  .cat-btn:hover { background:var(--cream); }
+  .cat-btn.active { background:var(--sage); color:white; font-weight:500; }
+  .theory-main { padding:2rem; max-width:860px; overflow-y:auto; }
+  .topic-tag { display:inline-block; background:var(--sage-light); color:#2e4a32; font-size:.72rem; font-weight:600; padding:.25rem .75rem; border-radius:20px; margin-bottom:.75rem; text-transform:uppercase; letter-spacing:.5px; }
+  .theory-main h2 { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; margin-bottom:.5rem; }
+  .theory-intro { color:var(--warm-gray); margin-bottom:2rem; line-height:1.6; font-size:.95rem; }
+  .subtopic-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:.75rem; margin-bottom:1.5rem; }
+  .subtopic-btn {
+    padding:1rem 1.1rem; border:2px solid var(--light-gray); border-radius:12px; background:var(--white);
+    cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.9rem; font-weight:600;
+    text-align:left; transition:all .2s; color:var(--charcoal);
+  }
+  .subtopic-btn.open { border-color:var(--sage); background:#f0f7f1; }
+  .teoria-box {
+    background:var(--white); border:2px solid var(--light-gray); border-radius:16px;
+    padding:1.5rem 1.75rem; margin-bottom:1rem; display:none;
+  }
+  .teoria-box.visible { display:block; }
+  .teoria-box h3 { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:600; color:var(--sage-dark); border-bottom:2px solid var(--light-gray); padding-bottom:.6rem; margin-bottom:1rem; }
+  .teoria-section { margin-bottom:1rem; }
+  .teoria-section h4 { font-weight:600; color:var(--terracotta); font-size:.95rem; margin-bottom:.4rem; }
+  .teoria-section p { font-size:.9rem; line-height:1.7; }
+  .teoria-section ul { padding-left:1.2rem; margin-top:.3rem; }
+  .teoria-section li { font-size:.88rem; line-height:1.7; }
+  .pills { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.5rem; }
+  .pill { background:#e8f5e9; border:1px solid #a5d6a7; border-radius:20px; padding:.25rem .75rem; font-size:.8rem; font-weight:500; color:#2e7d32; }
+
+  /* TEST */
+  .test-wrap { max-width:660px; margin:0 auto; padding:2rem; }
+  .page-header { text-align:center; margin-bottom:2rem; }
+  .page-header h2 { font-family:'Playfair Display',serif; font-size:1.9rem; font-weight:700; margin-bottom:.5rem; }
+  .page-header p { color:var(--warm-gray); }
+  .cat-picker { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.6rem; margin-bottom:1.5rem; }
+  .pick-btn {
+    padding:.85rem .6rem; border:2px solid var(--light-gray); border-radius:12px; background:var(--white);
+    color:var(--charcoal); cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.83rem; font-weight:500; transition:all .2s;
+  }
+  .pick-btn.sel { border-color:var(--sage); background:var(--sage); color:white; }
+  .btn-start {
+    width:100%; padding:1rem; background:var(--terracotta); color:white; border:none; border-radius:12px;
+    font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:600; cursor:pointer; transition:all .2s;
+  }
+  .btn-start:hover { background:#a85a35; }
+  .q-card { background:var(--white); border:2px solid var(--light-gray); border-radius:16px; padding:1.75rem; display:none; }
+  .q-card.active { display:block; }
+  .q-progress-row { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; }
+  .q-num { font-size:.85rem; color:var(--warm-gray); white-space:nowrap; }
+  .pbar { flex:1; height:6px; background:var(--light-gray); border-radius:3px; overflow:hidden; }
+  .pfill { height:100%; background:var(--sage); border-radius:3px; transition:width .4s; }
+  .q-text { font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:1.5rem; }
+  .q-opts { display:flex; flex-direction:column; gap:.6rem; }
+  .q-opt {
+    padding:.85rem 1.1rem; border:2px solid var(--light-gray); border-radius:10px; background:var(--white);
+    cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.92rem; text-align:left; transition:all .2s;
+  }
+  .q-opt:hover:not(:disabled) { border-color:var(--sage-light); background:var(--cream); }
+  .q-opt.correct { border-color:#4caf50; background:#e8f5e9; color:#2e7d32; font-weight:600; }
+  .q-opt.wrong { border-color:#ef5350; background:#ffebee; color:#c62828; }
+  .q-exp { margin-top:1rem; padding:.9rem 1rem; background:var(--cream); border-left:4px solid var(--sage); border-radius:0 8px 8px 0; font-size:.88rem; line-height:1.7; display:none; }
+  .q-exp.show { display:block; }
+  .btn-next {
+    margin-top:1rem; padding:.7rem 1.5rem; background:var(--sage); color:white; border:none;
+    border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:600; cursor:pointer; display:none;
+  }
+  .btn-next.show { display:inline-block; }
+  .result-card { background:var(--white); border:2px solid var(--light-gray); border-radius:16px; padding:2.5rem; text-align:center; display:none; }
+  .result-card.active { display:block; }
+  .result-score { font-size:4rem; font-weight:700; color:var(--sage-dark); line-height:1; }
+  .result-label { font-size:1.1rem; color:var(--warm-gray); margin:.75rem 0 1.5rem; }
+
+  /* FLASHCARDS */
+  .flash-wrap { max-width:620px; margin:0 auto; padding:2rem; }
+  .flash-cats { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; margin-bottom:1.5rem; }
+  .flash-cat {
+    padding:.45rem 1rem; border:2px solid var(--light-gray); border-radius:20px; background:var(--white);
+    cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; transition:all .2s;
+  }
+  .flash-cat.active { border-color:var(--terracotta); background:var(--terracotta); color:white; }
+  .fc-container { height:260px; cursor:pointer; perspective:1200px; margin-bottom:1rem; }
+  .fc { width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform .55s cubic-bezier(.4,0,.2,1); }
+  .fc.flipped { transform:rotateY(180deg); }
+  .fc-face {
+    position:absolute; width:100%; height:100%; backface-visibility:hidden;
+    border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; text-align:center;
+  }
+  .fc-front { background:linear-gradient(135deg,#4a7050,#7a9e7e); color:white; box-shadow:0 8px 30px rgba(74,112,80,.3); }
+  .fc-back { background:var(--white); border:2px solid var(--light-gray); transform:rotateY(180deg); box-shadow:0 8px 30px rgba(0,0,0,.08); }
+  .fc-label { font-size:.7rem; text-transform:uppercase; letter-spacing:2px; opacity:.7; margin-bottom:1rem; }
+  .fc-back .fc-label { color:var(--warm-gray); opacity:1; }
+  .fc-term { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; line-height:1.3; }
+  .fc-def { font-size:.95rem; line-height:1.6; }
+  .flash-hint { text-align:center; font-size:.8rem; color:var(--warm-gray); margin-bottom:1rem; }
+  .flash-nav { display:flex; align-items:center; justify-content:space-between; }
+  .flash-btn {
+    padding:.7rem 1.4rem; border:2px solid var(--light-gray); border-radius:10px; background:var(--white);
+    cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.92rem; font-weight:500; transition:all .2s;
+  }
+  .flash-btn:hover { border-color:var(--sage); background:var(--sage); color:white; }
+  .flash-counter { font-size:.9rem; color:var(--warm-gray); }
+
+  /* AI CHAT */
+  .ai-wrap { max-width:760px; margin:0 auto; padding:2rem; }
+  .quick-qs { display:flex; flex-wrap:wrap; gap:.45rem; margin-bottom:1rem; }
+  .quick-q {
+    padding:.4rem .85rem; border:1.5px solid var(--sage-light); border-radius:20px; background:var(--white);
+    color:var(--sage-dark); cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.8rem; font-weight:500; transition:all .2s;
+  }
+  .quick-q:hover { background:var(--sage); color:white; border-color:var(--sage); }
+  .chat-win {
+    background:var(--white); border:2px solid var(--light-gray); border-radius:20px;
+    height:420px; overflow-y:auto; padding:1.25rem;
+    display:flex; flex-direction:column; gap:.85rem; margin-bottom:1rem;
+  }
+  .msg {
+    max-width:82%; padding:.85rem 1.15rem; border-radius:16px; font-size:.9rem; line-height:1.65;
+    animation:fadeUp .3s ease;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .msg.user { background:var(--sage); color:white; align-self:flex-end; border-bottom-right-radius:4px; }
+  .msg.ai { background:var(--cream); color:var(--charcoal); align-self:flex-start; border:1px solid var(--light-gray); border-bottom-left-radius:4px; }
+  .msg.ai strong { color:var(--sage-dark); }
+  .typing { display:flex; gap:4px; align-items:center; padding:.85rem 1.15rem; }
+  .dot {
+    width:8px; height:8px; background:var(--sage); border-radius:50%;
+    animation:bounce 1.2s infinite;
+  }
+  .dot:nth-child(2){animation-delay:.2s} .dot:nth-child(3){animation-delay:.4s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+  .chat-row { display:flex; gap:.75rem; }
+  .chat-input {
+    flex:1; padding:.85rem 1.2rem; border:2px solid var(--light-gray); border-radius:12px;
+    font-family:'DM Sans',sans-serif; font-size:.95rem; outline:none; background:var(--white); transition:border-color .2s;
+  }
+  .chat-input:focus { border-color:var(--sage); }
+  .btn-send {
+    padding:.85rem 1.5rem; background:var(--sage); color:white; border:none; border-radius:12px;
+    font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:600; cursor:pointer; transition:all .2s; white-space:nowrap;
+  }
+  .btn-send:hover { background:var(--sage-dark); }
+  .btn-send:disabled { opacity:.5; cursor:not-allowed; }
+
+  /* RESPONSIVE */
+  @media(max-width:768px){
+    .theory-layout{grid-template-columns:1fr}
+    .sidebar{position:static;height:auto;display:flex;flex-wrap:wrap;gap:.3rem;padding:1rem}
+    .cat-btn{width:auto}
+    .nav-tab{padding:.4rem .6rem;font-size:.78rem}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Para<span> Nati</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="goTo('home')">🏠 Inicio</button>
+    <button class="nav-tab" onclick="goTo('teoria')">📚 Teoría</button>
+    <button class="nav-tab" onclick="goTo('test')">✏️ Test</button>
+    <button class="nav-tab" onclick="goTo('flash')">🃏 Flashcards</button>
+    <button class="nav-tab" onclick="goTo('ai')">🤖 Asistente IA</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <h1>Tu guía completa de Parafarmacia</h1>
+    <p>Estudia, practica y domina todo lo que necesitas saber con ayuda de inteligencia artificial.</p>
+    <div class="hero-cards">
+      <button class="hero-card" onclick="goTo('teoria')"><span class="icon">📚</span><span>Teoría</span></button>
+      <button class="hero-card" onclick="goTo('test')"><span class="icon">✏️</span><span>Test</span></button>
+      <button class="hero-card" onclick="goTo('flash')"><span class="icon">🃏</span><span>Flashcards</span></button>
+      <button class="hero-card" onclick="goTo('ai')"><span class="icon">🤖</span><span>Asistente IA</span></button>
+    </div>
+  </div>
+  <div class="home-section">
+    <h2>¿Qué vas a estudiar?</h2>
+    <p>Haz clic en cualquier categoría para empezar</p>
+    <div class="cat-grid" id="home-cats"></div>
+  </div>
+</div>
+
+<!-- TEORÍA -->
+<div id="page-teoria" class="page">
+  <div class="theory-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="theory-main" id="theory-main"></div>
+  </div>
+</div>
+
+<!-- TEST -->
+<div id="page-test" class="page">
+  <div class="test-wrap">
+    <div class="page-header">
+      <h2>✏️ Test de Conocimientos</h2>
+      <p>Selecciona una categoría y pon a prueba tus conocimientos</p>
+    </div>
+    <div id="test-setup">
+      <div class="cat-picker" id="test-cats"></div>
+      <button class="btn-start" onclick="startTest()">Comenzar Test 🚀</button>
+    </div>
+    <div class="q-card" id="q-card">
+      <div class="q-progress-row">
+        <span class="q-num" id="q-num">Pregunta 1/10</span>
+        <div class="pbar"><div class="pfill" id="pfill" style="width:10%"></div></div>
+      </div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-opts" id="q-opts"></div>
+      <div class="q-exp" id="q-exp"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Siguiente →</button>
+    </div>
+    <div class="result-card" id="result-card">
+      <div class="result-score" id="result-score"></div>
+      <div class="result-label" id="result-label"></div>
+      <button class="btn-start" onclick="resetTest()" style="max-width:280px;margin:0 auto;display:block">🔄 Repetir</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<div id="page-flash" class="page">
+  <div class="flash-wrap">
+    <div class="page-header">
+      <h2>🃏 Flashcards</h2>
+      <p>Haz clic en la tarjeta para ver la definición</p>
+    </div>
+    <div class="flash-cats" id="flash-cats"></div>
+    <div class="fc-container" onclick="flipCard()">
+      <div class="fc" id="fc">
+        <div class="fc-face fc-front">
+          <div class="fc-label">Término</div>
+          <div class="fc-term" id="fc-term">—</div>
+        </div>
+        <div class="fc-face fc-back">
+          <div class="fc-label">Definición</div>
+          <div class="fc-def" id="fc-def">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="flash-hint">👆 Haz clic para voltear</div>
+    <div class="flash-nav">
+      <button class="flash-btn" onclick="prevCard()">← Anterior</button>
+      <span class="flash-counter" id="fc-counter">1 / —</span>
+      <button class="flash-btn" onclick="nextCard()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- IA -->
+<div id="page-ai" class="page">
+  <div class="ai-wrap">
+    <div class="page-header">
+      <h2>🤖 Asistente de Parafarmacia</h2>
+      <p>Pregunta cualquier duda y te responderé al momento</p>
+    </div>
+    <div class="quick-qs">
+      <button class="quick-q" onclick="quickQ('¿Qué es el SPF y cómo se clasifica?')">☀️ ¿Qué es el SPF?</button>
+      <button class="quick-q" onclick="quickQ('¿Qué vitaminas son liposolubles?')">💊 Vitaminas liposolubles</button>
+      <button class="quick-q" onclick="quickQ('¿Para qué sirve el aloe vera en cosmética?')">🌿 Aloe vera</button>
+      <button class="quick-q" onclick="quickQ('¿Diferencia entre probióticos y prebióticos?')">🦠 Probióticos vs Prebióticos</button>
+      <button class="quick-q" onclick="quickQ('¿Qué es un AINE y cuáles son los más usados?')">💉 ¿Qué es un AINE?</button>
+      <button class="quick-q" onclick="quickQ('¿Cómo funciona el ácido hialurónico en la piel?')">💧 Ácido hialurónico</button>
+    </div>
+    <div class="chat-win" id="chat-win">
+      <div class="msg ai">👋 ¡Hola Nati! Soy tu asistente especializado en <strong>parafarmacia</strong>. Puedo ayudarte con dermocosmética, nutrición, fitoterapia, medicamentos OTC, higiene, ortopedia y mucho más. ¿Qué quieres aprender hoy?</div>
+    </div>
+    <div class="chat-row">
+      <input type="text" class="chat-input" id="chat-input" placeholder="Escribe tu pregunta sobre parafarmacia..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="btn-send" id="btn-send" onclick="sendMsg()">Enviar ➤</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const CATS = {
+  dermocos:  { tag:'💄 Dermocosmética',  intro:'Productos cosméticos con acción sobre la piel formulados en el ámbito farmacéutico.' },
+  nutricion: { tag:'💊 Nutrición',        intro:'Complementos alimenticios: fuentes concentradas de nutrientes para completar la dieta.' },
+  fitoterapia:{ tag:'🌿 Fitoterapia',     intro:'Utilización de productos vegetales con finalidad terapéutica.' },
+  otc:       { tag:'💉 Medicamentos OTC', intro:'Medicamentos dispensados sin receta médica.' },
+  higiene:   { tag:'🧴 Higiene',          intro:'Productos de higiene bucodental, íntima y dermatológica.' },
+  ortopedia: { tag:'🦴 Ortopedia',        intro:'Productos de apoyo para el aparato locomotor.' },
+  homeopatia:{ tag:'⚗️ Homeopatía',       intro:'Sistema médico alternativo basado en el principio de los similares.' },
+  bebe:      { tag:'👶 Puericultura',     intro:'Cuidados del niño: cosmética, higiene y nutrición infantil.' },
+};
+
+const THEORY = {
+  dermocos: {
+    subtopics: [
+      { name:'🧬 Fisiología de la Piel', sections:[
+        { title:'Capas de la piel', text:'La piel tiene tres capas:', list:['Epidermis: capa más externa, avascular.','Dermis: colágeno, elastina, vasos y nervios.','Hipodermis: tejido adiposo subcutáneo.'] },
+        { title:'Tipos de piel', list:['Normal: equilibrada, poros pequeños.','Grasa: exceso de sebo, brillante.','Seca: falta de lípidos, tirantez.','Mixta: zona T grasa, mejillas secas.','Sensible: reacciona a estímulos.'] }
+      ]},
+      { name:'☀️ Fotoprotección', sections:[
+        { title:'¿Qué es el SPF?', text:'Factor de Protección Solar. SPF 50 filtra el 98% de UVB. Categorías: 6-10 (bajo), 15-25 (medio), 30-50 (alto), 50+ (muy alto).' },
+        { title:'Filtros solares', text:'Físicos (TiO₂, ZnO): reflejan la radiación. Químicos (avobenzona, octocrileno): absorben la radiación.', pills:['TiO₂','ZnO','Avobenzona','Octocrileno'] }
+      ]},
+      { name:'💧 Hidratación y Antienvejecimiento', sections:[
+        { title:'Activos hidratantes', text:'Humectantes: glicerina, ácido hialurónico. Oclusivos: vaselina, ceras. Emolientes: ceramidas, manteca de karité.' },
+        { title:'Antienvejecimiento', list:['Retinol: renovación celular y colágeno.','Vitamina C: antioxidante, procolágeno.','Péptidos: estimulan fibroblastos.','AHA/BHA: exfoliantes químicos.','Niacinamida: regula sebo, poros.'], pills:['Retinol','Vitamina C','Péptidos','AHA','BHA'] }
+      ]},
+      { name:'💆 Tratamientos Específicos', sections:[
+        { title:'Acné', text:'Ingredientes clave: ácido salicílico (comedolítico), peróxido de benzoílo (antibacteriano), niacinamida (antiinflamatoria), zinc (seboregulador).' },
+        { title:'Hiperpigmentación', text:'Activos despigmentantes: ácido kójico, ácido azelaico, ácido tranexámico, vitamina C, arbutina.' }
+      ]}
+    ]
+  },
+  nutricion: {
+    subtopics: [
+      { name:'🅰️ Vitaminas', sections:[
+        { title:'Vitaminas liposolubles', text:'Se almacenan en grasa. Riesgo de toxicidad.', list:['Vitamina A: visión, inmunidad, piel.','Vitamina D: absorción de calcio.','Vitamina E: antioxidante.','Vitamina K: coagulación.'], pills:['A','D','E','K'] },
+        { title:'Vitaminas hidrosolubles', text:'Exceso eliminado por orina.', list:['C: antioxidante, colágeno.','B1 (tiamina): metabolismo energético.','B6: neurotransmisores.','B9 (ác. fólico): fundamental en embarazo.','B12: glóbulos rojos, sistema nervioso.'], pills:['C','B1','B6','B9','B12'] }
+      ]},
+      { name:'⚙️ Minerales', sections:[
+        { title:'Macrominerales', text:'Calcio (huesos), Magnesio (enzimas), Hierro (hemoglobina), Zinc (inmunidad, cicatrización).' },
+        { title:'Oligoelementos', text:'Selenio (antioxidante), Yodo (tiroides), Cobre (metabolismo del hierro), Cromo (glucosa e insulina).' }
+      ]},
+      { name:'🦠 Probióticos y Prebióticos', sections:[
+        { title:'Probióticos', text:'Microorganismos vivos que confieren beneficio al huésped. Ej: Lactobacillus acidophilus, L. rhamnosus GG, Bifidobacterium longum.' },
+        { title:'Prebióticos', text:'Sustratos no digeribles que estimulan bacterias beneficiosas. Ej: inulina, FOS, GOS. Los simbióticos combinan ambos.' }
+      ]},
+      { name:'💪 Proteínas y Deporte', sections:[
+        { title:'Proteínas', text:'Whey: alta absorción. Caseína: absorción lenta. Proteína vegetal: guisante, arroz, soja. Para músculo: 1.6-2.2 g/kg/día.' },
+        { title:'Creatina', text:'Suplemento más estudiado. Aumenta fosfocreatina muscular. Mejora fuerza en alta intensidad. Dosis: 3-5 g/día.' }
+      ]}
+    ]
+  },
+  fitoterapia: {
+    subtopics: [
+      { name:'🌱 Conceptos Básicos', sections:[
+        { title:'Preparaciones', list:['Infusión: agua caliente sobre flores/hojas.','Decocción: hervir raíces/cortezas.','Tintura madre: maceración en alcohol.','Extracto seco: concentrado sin disolvente.'] }
+      ]},
+      { name:'😴 Sistema Nervioso y Sueño', sections:[
+        { title:'Plantas sedantes', list:['Valeriana: sedante suave, insomnio y ansiedad.','Pasiflora: ansiedad leve.','Lúpulo: sedante, combinado con valeriana.','Melisa: ansiedad, digestivo.','Lavanda: aromaterapia.'], pills:['Valeriana','Pasiflora','Melisa','Lavanda'] }
+      ]},
+      { name:'🫁 Digestivo y Hepático', sections:[
+        { title:'Plantas digestivas', list:['Alcachofa: colerético, hepatoprotector.','Cardo mariano: hepatoprotector (silimarina).','Hinojo: carminativo, antiespasmódico.','Menta piperita: digestiva.','Jengibre: antiemético, antiinflamatorio.'] }
+      ]},
+      { name:'❤️ Circulación', sections:[
+        { title:'Plantas circulatorias', list:['Ginkgo biloba: circulación cerebral y periférica.','Vid roja: insuficiencia venosa.','Castaño de Indias: varices, hemorroides.','Espino albar: tónico cardíaco.'], pills:['Ginkgo','Vid roja','Castaño de Indias'] }
+      ]},
+      { name:'🫙 Aceites Esenciales', sections:[
+        { title:'Principales', list:['Tea tree: antibacteriano, antifúngico, acné.','Lavanda: calmante, cicatrizante.','Eucalipto: descongestionante.','Menta: analgésico tópico.','Rosa mosqueta: regenerador, cicatrices.'] }
+      ]}
+    ]
+  },
+  otc: {
+    subtopics: [
+      { name:'💊 Analgésicos y Antipiréticos', sections:[
+        { title:'Paracetamol', text:'Analgésico y antipirético. Dosis máxima: 4 g/día. Contraindicado en hepatopatías.' },
+        { title:'Ibuprofeno (AINE)', text:'Analgésico, antipirético y antiinflamatorio. Contraindicado en úlcera, insuficiencia renal y 3er trimestre de embarazo.' },
+        { title:'AAS (Aspirina)', text:'No usar en menores de 16 años por riesgo de Síndrome de Reye.' }
+      ]},
+      { name:'🤧 Resfriado y Tos', sections:[
+        { title:'Antitusígenos', list:['Dextrometorfano: acción central, no opioide.','Codeína: opioide débil.'] },
+        { title:'Mucolíticos', list:['Acetilcisteína (NAC): fluidifica el moco.','Ambroxol: estimula surfactante.','Guaifenesina: expectorante.'] },
+        { title:'Descongestionantes', text:'Tópicos (oximetazolina): máximo 3-5 días. Riesgo de rinitis medicamentosa por efecto rebote.' }
+      ]},
+      { name:'🤢 Digestivos', sections:[
+        { title:'Antiácidos y Protectores', list:['Antiácidos (Al/Mg): alivio rápido.','Alginatos (Gaviscon): barrera anti-reflujo.','Omeprazol OTC 20 mg: máximo 14 días sin receta.'] },
+        { title:'Antidiarreicos y Laxantes', list:['Loperamida: reduce motilidad. No en diarrea febril.','Sales rehidratación oral: primera elección.','Osmóticos (macrogol): no irritan mucosa.','Estimulantes (bisacodilo): uso puntual.'] }
+      ]},
+      { name:'🤧 Antihistamínicos', sections:[
+        { title:'1ª Generación (sedantes)', text:'Difenhidramina, clorfeniramina, doxilamina. Cruzan la barrera hematoencefálica. Útiles para alergias e insomnio.' },
+        { title:'2ª Generación (no sedantes)', text:'Loratadina, cetirizina, ebastina. Primera elección en rinitis alérgica y urticaria.' }
+      ]}
+    ]
+  },
+  higiene: {
+    subtopics: [
+      { name:'🦷 Higiene Bucodental', sections:[
+        { title:'Dentífricos', text:'Flúor: remineraliza y previene caries. Clorhexidina: antibacteriano. Para sensibilidad: nitrato potásico.' },
+        { title:'Colutorios', text:'Clorhexidina (0.12-0.2%): máximo 2 semanas por tinción dental. Flúor: refuerzo esmalte.' }
+      ]},
+      { name:'🌸 Higiene Íntima', sections:[
+        { title:'pH vaginal', text:'Normal: 3.5-4.5 (ácido). Mantenido por Lactobacillus. Usar productos con pH adaptado.' },
+        { title:'Afecciones', list:['Candidiasis: clotrimazol, miconazol OTC.','Vaginosis: tratamiento con metronidazol (receta).'] }
+      ]},
+      { name:'🧴 Dermatología', sections:[
+        { title:'Piel atópica', text:'Emolientes con ceramidas, urea, niacinamida. Evitar jabones alcalinos.' },
+        { title:'Antisépticos', list:['Povidona yodada: amplio espectro.','Clorhexidina: heridas limpias.','Agua oxigenada 3%: solo limpieza inicial.'] }
+      ]}
+    ]
+  },
+  ortopedia: {
+    subtopics: [
+      { name:'🦶 Pie y Tobillo', sections:[
+        { title:'Plantillas', text:'Para pie plano, pie cavo, fascitis plantar. Materiales: EVA, silicona, polipropileno.' },
+        { title:'Vendajes', text:'Kinesiotaping, compresivo, ortesis de tobillo para esguinces grado I-II.' }
+      ]},
+      { name:'🩹 Columna y Rodilla', sections:[
+        { title:'Fajas lumbares', text:'Lumbalgia aguda < 6 semanas. No a largo plazo (atrofia muscular).' },
+        { title:'Rodilleras', text:'Neopreno: calor y compresión. Patelar: tendinitis rotuliana. Articulada: inestabilidad.' }
+      ]},
+      { name:'🧊 Termoterapia y Crioterapia', sections:[
+        { title:'Calor', text:'Contracturas crónicas, artritis, rigidez. Bolsas de semillas, almohadillas eléctricas.' },
+        { title:'Frío', text:'Lesiones agudas (48-72h). Protocolo RICE. 15-20 min con paño protector.' }
+      ]}
+    ]
+  },
+  homeopatia: {
+    subtopics: [
+      { name:'⚗️ Principios Fundamentales', sections:[
+        { title:'Ley de los similares', text:'Lo similar cura lo similar. Una sustancia que produce síntomas puede curarlos en dosis muy pequeñas.' },
+        { title:'Diluciones', text:'Decimales (D): 1:10. Centesimales (CH): 1:100. A partir de 12C no queda molécula del principio activo.' }
+      ]},
+      { name:'🔬 Posición Científica', sections:[
+        { title:'Evidencia', text:'Metaanálisis Cochrane no muestran eficacia superior al placebo. La regulación española (AEMPS) no permite alegaciones terapéuticas sin ensayos clínicos.' }
+      ]}
+    ]
+  },
+  bebe: {
+    subtopics: [
+      { name:'🍼 Nutrición Infantil', sections:[
+        { title:'Lactancia materna', text:'OMS: exclusiva 6 meses, complementaria hasta 2 años. Suplementar vitamina D 400 UI/día desde el nacimiento.' },
+        { title:'Fórmulas', text:'Tipo 1 (inicio): 0-6 meses. Tipo 2 (continuación): 6-12 meses. Especiales: AR, anticólico, sin lactosa, hidrolizadas.' }
+      ]},
+      { name:'🛁 Cosmética Infantil', sections:[
+        { title:'Piel del bebé', text:'pH más alto (7), barrera inmadura. Productos hipoalergénicos, sin perfume, pH 6-6.5.' },
+        { title:'Dermatitis del pañal', text:'Crema barrera con óxido de zinc. Cambio frecuente. Sobreinfección fúngica: nistatina o clotrimazol.' }
+      ]},
+      { name:'💊 Medicación Pediátrica', sections:[
+        { title:'Analgésicos', text:'Paracetamol: 10-15 mg/kg cada 4-6h. Ibuprofeno: desde 3 meses, 5-10 mg/kg cada 6-8h. NUNCA aspirina < 16 años.' }
+      ]}
+    ]
+  }
+};
+
+const QUESTIONS = [
+  {cat:'dermocos',q:'¿Cuál es la función principal de la epidermis?',opts:['Almacenar grasa','Producir colágeno','Proteger del exterior','Transportar sangre'],a:2,exp:'La epidermis es la barrera protectora más externa frente a agentes externos y pérdida de agua.'},
+  {cat:'dermocos',q:'Un SPF 50 filtra aproximadamente...',opts:['50% de UVB','90% de UVB','98% de UVB','100% de UVB'],a:2,exp:'SPF 50 filtra el 98% de los rayos UVB. Ningún protector da el 100%.'},
+  {cat:'dermocos',q:'¿Qué tipo de filtro solar es el TiO₂?',opts:['Filtro químico','Filtro físico mineral','Antioxidante','Humectante'],a:1,exp:'TiO₂ y ZnO son filtros físicos que actúan reflejando la radiación UV.'},
+  {cat:'dermocos',q:'El retinol pertenece al grupo de...',opts:['Vitaminas hidrosolubles','Vitaminas del grupo B','Vitamina A','Ácidos grasos'],a:2,exp:'El retinol es la forma activa de la vitamina A. Principal activo antiedad con evidencia científica.'},
+  {cat:'nutricion',q:'¿Qué vitaminas son liposolubles?',opts:['A, C, D, E','A, D, E, K','B, C, D, K','C, D, E, K'],a:1,exp:'Las vitaminas liposolubles son A, D, E y K. Se almacenan en grasa y pueden acumularse.'},
+  {cat:'nutricion',q:'¿Cuál es la función principal de la vitamina D?',opts:['Coagulación sanguínea','Síntesis de colágeno','Absorción de calcio','Transporte de oxígeno'],a:2,exp:'La vitamina D es fundamental para la absorción intestinal de calcio y la salud ósea.'},
+  {cat:'nutricion',q:'Los probióticos son...',opts:['Sustratos que alimentan bacterias','Microorganismos vivos beneficiosos','Minerales esenciales','Enzimas digestivas'],a:1,exp:'Microorganismos vivos que en cantidades adecuadas confieren beneficio al huésped (OMS).'},
+  {cat:'nutricion',q:'El ácido fólico es especialmente importante en...',opts:['La menopausia','El embarazo','La adolescencia','El deporte'],a:1,exp:'Fundamental en el embarazo, previene defectos del tubo neural.'},
+  {cat:'fitoterapia',q:'¿Para qué se usa la valeriana?',opts:['Infecciones respiratorias','Ansiedad e insomnio','Problemas hepáticos','Dolor muscular'],a:1,exp:'Valeriana officinalis es sedante suave para ansiedad leve e insomnio.'},
+  {cat:'fitoterapia',q:'El cardo mariano se usa como...',opts:['Diurético','Ansiolítico','Hepatoprotector','Antihistamínico'],a:2,exp:'Silybum marianum es el hepatoprotector de referencia. Su silimarina protege el hígado.'},
+  {cat:'fitoterapia',q:'¿Qué planta mejora la circulación cerebral?',opts:['Menta piperita','Ginkgo biloba','Hinojo','Lúpulo'],a:1,exp:'Ginkgo biloba es vasodilatador, mejora circulación cerebral y periférica.'},
+  {cat:'otc',q:'Dosis máxima diaria de paracetamol en adultos:',opts:['2 g/día','3 g/día','4 g/día','6 g/día'],a:2,exp:'4 g/día en adultos sanos. Reducir en hepatopatías o consumo de alcohol.'},
+  {cat:'otc',q:'El ibuprofeno está contraindicado en...',opts:['Embarazo 1er trimestre','Lactancia materna','Úlcera gástrica e insuficiencia renal','Solo en niños'],a:2,exp:'Contraindicado en úlcera activa, insuficiencia renal y 3er trimestre del embarazo.'},
+  {cat:'otc',q:'¿Por qué no se da aspirina a menores de 16 años?',opts:['Nefrotoxicidad','Síndrome de Reye','Sabor amargo','Interacciones con vacunas'],a:1,exp:'La aspirina asociada a virus en niños puede causar el Síndrome de Reye (daño hepático y cerebral).'},
+  {cat:'higiene',q:'¿Cuál es el pH vaginal normal?',opts:['6.5-7.5','7.0-8.0','3.5-4.5','5.5-6.5'],a:2,exp:'pH ácido 3.5-4.5 mantenido por Lactobacillus. Los productos deben respetar este pH.'},
+  {cat:'higiene',q:'La clorhexidina en colutorio máximo 2 semanas porque...',opts:['Tóxica para encías','Produce tinción dental','Destruye esmalte','Hipersensibilidad'],a:1,exp:'Causa tinción parduzca en dientes y lengua con uso prolongado.'},
+  {cat:'ortopedia',q:'¿Cuánto tiempo máximo el descongestionante nasal tópico?',opts:['1 día','3-5 días','2 semanas','1 mes'],a:1,exp:'Máximo 3-5 días para evitar rinitis medicamentosa por efecto rebote.'},
+  {cat:'bebe',q:'¿Qué vitamina suplementar en lactancia materna exclusiva?',opts:['Vitamina A','Vitamina C','Vitamina D','Vitamina K'],a:2,exp:'Vitamina D 400 UI/día desde el nacimiento. La leche materna no aporta cantidades suficientes.'},
+];
+
+const FLASH = [
+  {cat:'dermocos',term:'SPF',def:'Factor de Protección Solar. Mide protección frente a UVB. SPF 50 filtra el 98% de UVB.'},
+  {cat:'dermocos',term:'Retinol',def:'Forma activa de la vitamina A. Estimula renovación celular y síntesis de colágeno. Principal activo antiedad.'},
+  {cat:'dermocos',term:'Ácido Hialurónico',def:'Humectante que capta hasta 1000 veces su peso en agua. Hidratación profunda de la piel.'},
+  {cat:'dermocos',term:'Ceramidas',def:'Lípidos del cemento intercelular de la epidermis. Restauran la barrera cutánea. Clave en piel atópica.'},
+  {cat:'dermocos',term:'Niacinamida',def:'Vitamina B3. Regula sebo, minimiza poros, despigmenta. Bien tolerada en todo tipo de pieles.'},
+  {cat:'nutricion',term:'Vitaminas liposolubles',def:'A, D, E y K. Se disuelven en grasas, se almacenan. Riesgo de hipervitaminosis.'},
+  {cat:'nutricion',term:'Probiótico',def:'Microorganismo vivo que en cantidades adecuadas confiere beneficio para la salud del huésped.'},
+  {cat:'nutricion',term:'Prebiótico',def:'Sustrato no digerible que estimula bacterias beneficiosas del colon. Ej: inulina, FOS, GOS.'},
+  {cat:'nutricion',term:'Omega-3 (EPA/DHA)',def:'Ácidos grasos esenciales. Cardioprotector, antiinflamatorio, neuroprotector. Fuente: pescado azul.'},
+  {cat:'nutricion',term:'Ácido Fólico (B9)',def:'Esencial en embarazo. Previene defectos del tubo neural. 400 mcg/día desde antes de la concepción.'},
+  {cat:'fitoterapia',term:'Valeriana',def:'Valeriana officinalis. Sedante suave y ansiolítica. Para insomnio y ansiedad leve.'},
+  {cat:'fitoterapia',term:'Cardo Mariano',def:'Silybum marianum. Hepatoprotector por silimarina. Protege el hígado frente a toxinas.'},
+  {cat:'fitoterapia',term:'Ginkgo Biloba',def:'Vasodilatador periférico y cerebral. Útil en insuficiencia venosa y deterioro cognitivo leve.'},
+  {cat:'fitoterapia',term:'Tea Tree',def:'Aceite esencial de Melaleuca. Antibacteriano y antifúngico. Indicado en acné y hongos.'},
+  {cat:'otc',term:'Paracetamol',def:'Analgésico y antipirético. Dosis máxima adulto: 4 g/día. Contraindicado en hepatopatías.'},
+  {cat:'otc',term:'AINE',def:'Antiinflamatorio No Esteroideo. Inhibe COX-1/COX-2. Ej: ibuprofeno, naproxeno.'},
+  {cat:'otc',term:'Dextrometorfano',def:'Antitusígeno central. No opioide en dosis terapéuticas. Para tos seca no productiva.'},
+  {cat:'otc',term:'Loperamida',def:'Antidiarreico. Reduce motilidad intestinal. No usar en diarrea infecciosa febril.'},
+  {cat:'higiene',term:'Clorhexidina',def:'Antiséptico amplio espectro. Máx. 2 semanas en colutorio. Ideal heridas limpias y gingivitis.'},
+  {cat:'higiene',term:'pH vaginal',def:'Normalmente 3.5-4.5 ácido, mantenido por Lactobacillus. Respetar con productos de higiene íntima.'},
+];
+
+// ── NAV ──────────────────────────────────────────────────────────
+function goTo(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const pages = ['home','teoria','test','flash','ai'];
+  document.querySelectorAll('.nav-tab')[pages.indexOf(id)].classList.add('active');
+  if (id === 'teoria') initTheory();
+  if (id === 'flash')  initFlash();
+}
+
+// ── HOME ─────────────────────────────────────────────────────────
+(function buildHome() {
+  const el = document.getElementById('home-cats');
+  Object.entries(CATS).forEach(([key, c]) => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-card';
+    btn.innerHTML = `<h4>${c.tag}</h4><p>${c.intro}</p>`;
+    btn.onclick = () => { goTo('teoria'); setTimeout(() => selectCat(key), 50); };
+    el.appendChild(btn);
+  });
+})();
+
+// ── THEORY ───────────────────────────────────────────────────────
+let activeCat = 'dermocos';
+function initTheory() {
+  buildSidebar();
+  renderTheory(activeCat);
+}
+
+function buildSidebar() {
+  const sb = document.getElementById('sidebar');
+  sb.innerHTML = '<div class="sidebar-label">Categorías</div>';
+  Object.entries(CATS).forEach(([key, c]) => {
+    const b = document.createElement('button');
+    b.className = 'cat-btn' + (key === activeCat ? ' active' : '');
+    b.textContent = c.tag;
+    b.id = 'sb-' + key;
+    b.onclick = () => selectCat(key);
+    sb.appendChild(b);
+  });
+}
+
+function selectCat(key) {
+  activeCat = key;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('sb-' + key);
+  if (btn) btn.classList.add('active');
+  renderTheory(key);
+}
+
+function renderTheory(key) {
+  const c = CATS[key]; const t = THEORY[key];
+  const main = document.getElementById('theory-main');
+  let html = `<span class="topic-tag">${c.tag}</span><h2>${c.tag.replace(/^[^\s]+\s/,'')}</h2><p class="theory-intro">${c.intro}</p><div class="subtopic-grid">`;
+  t.subtopics.forEach((st, i) => {
+    html += `<button class="subtopic-btn" id="stbtn-${key}-${i}" onclick="toggleSt('${key}',${i})">${st.name} <span style="float:right;color:var(--sage)">▼</span></button>`;
+  });
+  html += '</div>';
+  t.subtopics.forEach((st, i) => {
+    html += `<div class="teoria-box" id="st-${key}-${i}"><h3>${st.name}</h3>`;
+    st.sections.forEach(s => {
+      html += `<div class="teoria-section"><h4>${s.title}</h4>`;
+      if (s.text) html += `<p>${s.text}</p>`;
+      if (s.list) html += '<ul>' + s.list.map(x => `<li>${x}</li>`).join('') + '</ul>';
+      if (s.pills) html += '<div class="pills">' + s.pills.map(p => `<span class="pill">${p}</span>`).join('') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  main.innerHTML = html;
+}
+
+function toggleSt(key, i) {
+  const box = document.getElementById(`st-${key}-${i}`);
+  const btn = document.getElementById(`stbtn-${key}-${i}`);
+  box.classList.toggle('visible');
+  btn.classList.toggle('open');
+  if (box.classList.contains('visible')) box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── TEST ─────────────────────────────────────────────────────────
+let testCat = 'all', testQs = [], testIdx = 0, testScore = 0;
+
+(function buildTestCats() {
+  const el = document.getElementById('test-cats');
+  const cats = [{id:'all',label:'🎯 Todos'}, ...Object.entries(CATS).map(([k,c]) => ({id:k,label:c.tag}))];
+  cats.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'pick-btn' + (c.id === 'all' ? ' sel' : '');
+    b.textContent = c.label;
+    b.onclick = () => { document.querySelectorAll('.pick-btn').forEach(x => x.classList.remove('sel')); b.classList.add('sel'); testCat = c.id; };
+    el.appendChild(b);
+  });
+})();
+
+function startTest() {
+  let pool = testCat === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.cat === testCat);
+  if (!pool.length) return;
+  testQs = shuffle(pool).slice(0, Math.min(10, pool.length));
+  testIdx = 0; testScore = 0;
+  document.getElementById('test-setup').style.display = 'none';
+  document.getElementById('result-card').classList.remove('active');
+  document.getElementById('q-card').classList.add('active');
+  showQ();
+}
+
+function showQ() {
+  const q = testQs[testIdx];
+  document.getElementById('q-num').textContent = `Pregunta ${testIdx+1} / ${testQs.length}`;
+  document.getElementById('pfill').style.width = ((testIdx+1)/testQs.length*100) + '%';
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-exp').textContent = '💡 ' + q.exp;
+  document.getElementById('q-exp').classList.remove('show');
+  document.getElementById('btn-next').classList.remove('show');
+  const opts = document.getElementById('q-opts');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const b = document.createElement('button');
+    b.className = 'q-opt'; b.textContent = o;
+    b.onclick = () => answerQ(i, q.a);
+    opts.appendChild(b);
+  });
+}
+
+function answerQ(chosen, correct) {
+  const btns = document.querySelectorAll('.q-opt');
+  btns.forEach(b => b.disabled = true);
+  btns[chosen].classList.add(chosen === correct ? 'correct' : 'wrong');
+  if (chosen !== correct) btns[correct].classList.add('correct');
+  if (chosen === correct) testScore++;
+  document.getElementById('q-exp').classList.add('show');
+  document.getElementById('btn-next').classList.add('show');
+}
+
+function nextQ() {
+  testIdx++;
+  if (testIdx >= testQs.length) { showResult(); return; }
+  showQ();
+}
+
+function showResult() {
+  document.getElementById('q-card').classList.remove('active');
+  document.getElementById('result-card').classList.add('active');
+  const pct = testScore / testQs.length;
+  document.getElementById('result-score').textContent = `${testScore}/${testQs.length}`;
+  document.getElementById('result-label').textContent = pct >= .8 ? '🎉 ¡Excelente! Dominas el tema.' : pct >= .6 ? '👍 Bien, repasa algunos conceptos.' : '📚 Sigue estudiando, ¡tú puedes!';
+}
+
+function resetTest() {
+  document.getElementById('result-card').classList.remove('active');
+  document.getElementById('q-card').classList.remove('active');
+  document.getElementById('test-setup').style.display = 'block';
+}
+
+// ── FLASHCARDS ────────────────────────────────────────────────────
+let flashCat = 'all', flashList = [], flashIdx = 0;
+
+function initFlash() {
+  const el = document.getElementById('flash-cats');
+  if (el.children.length > 0) { renderFlash(); return; }
+  const cats = [{id:'all',label:'Todos'},{id:'dermocos',label:'💄'},{id:'nutricion',label:'💊'},{id:'fitoterapia',label:'🌿'},{id:'otc',label:'💉'},{id:'higiene',label:'🧴'}];
+  cats.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'flash-cat' + (c.id === 'all' ? ' active' : '');
+    b.textContent = c.label + (c.id !== 'all' ? ' ' + c.id.charAt(0).toUpperCase() + c.id.slice(1) : '');
+    b.onclick = () => { document.querySelectorAll('.flash-cat').forEach(x => x.classList.remove('active')); b.classList.add('active'); flashCat = c.id; flashIdx = 0; renderFlash(); };
+    el.appendChild(b);
+  });
+  renderFlash();
+}
+
+function renderFlash() {
+  flashList = flashCat === 'all' ? FLASH : FLASH.filter(f => f.cat === flashCat);
+  flashList = shuffle(flashList);
+  flashIdx = 0;
+  showCard();
+}
+
+function showCard() {
+  if (!flashList.length) return;
+  const c = flashList[flashIdx];
+  document.getElementById('fc-term').textContent = c.term;
+  document.getElementById('fc-def').textContent = c.def;
+  document.getElementById('fc-counter').textContent = `${flashIdx+1} / ${flashList.length}`;
+  document.getElementById('fc').classList.remove('flipped');
+}
+
+function flipCard() { document.getElementById('fc').classList.toggle('flipped'); }
+function nextCard() { flashIdx = (flashIdx+1) % flashList.length; showCard(); }
+function prevCard() { flashIdx = (flashIdx-1+flashList.length) % flashList.length; showCard(); }
+
+// ── AI CHAT ───────────────────────────────────────────────────────
+const chatHistory = [];
+
+async function sendMsg() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  addMsg('user', msg);
+  input.value = '';
+  document.getElementById('btn-send').disabled = true;
+
+  chatHistory.push({ role:'user', content: msg });
+
+  const typingId = 'typing-' + Date.now();
+  const win = document.getElementById('chat-win');
+  win.innerHTML += `<div class="msg ai typing" id="${typingId}"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  win.scrollTop = win.scrollHeight;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: chatHistory })
+    });
+    const data = await res.json();
+    const reply = data.reply || data.error || 'Sin respuesta.';
+    chatHistory.push({ role:'assistant', content: reply });
+    document.getElementById(typingId)?.remove();
+    addMsg('ai', reply);
+  } catch(e) {
+    document.getElementById(typingId)?.remove();
+    addMsg('ai', '❌ Error al conectar. Inténtalo de nuevo.');
+  }
+  document.getElementById('btn-send').disabled = false;
+}
+
+function addMsg(role, text) {
+  const win = document.getElementById('chat-win');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+  win.appendChild(div);
+  win.scrollTop = win.scrollHeight;
+}
+
+function quickQ(q) { document.getElementById('chat-input').value = q; sendMsg(); }
+
+// ── UTIL ──────────────────────────────────────────────────────────
+function shuffle(arr) { return [...arr].sort(() => Math.random() - .5); }
+</script>
+</body>
+</html>
