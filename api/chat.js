@@ -4,53 +4,52 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message } = req.body || {};
+    const { messages } = req.body || {};
 
-    if (!message) {
-      return res.status(400).json({ error: "Falta el mensaje" });
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: "Faltan los mensajes" });
     }
 
-    const response = await fetch(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": "https://paranati.vercel.app",
-          "X-Title": "Paranati",
-        },
-        body: JSON.stringify({
-          model: "mistralai/mistral-7b-instruct:free",
-          messages: [
-            {
-              role: "user",
-              content: message,
-            },
-          ],
-        }),
-      }
-    );
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://paranati.vercel.app",
+        "X-Title": "Para Nati"
+      },
+      body: JSON.stringify({
+        model: "mistralai/mistral-7b-instruct:free",
+        messages: [
+          {
+            role: "system",
+            content: `Eres un asistente especializado en farmacia y parafarmacia.
+Responde siempre en español.
+Explica de forma clara, útil y fácil de entender.
+Ayuda con temas de dispensación, dermocosmética, nutrición, fitoterapia, puericultura, primeros auxilios, anatomía básica, oficina de farmacia, laboratorio y formulación magistral.
+Si una consulta requiere diagnóstico o atención médica, indícalo con prudencia.`
+          },
+          ...messages
+        ]
+      })
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error: data?.error?.message || "Error OpenRouter",
-        details: data,
+        error: data?.error?.message || "Error al llamar a OpenRouter"
       });
     }
 
     const reply =
       data?.choices?.[0]?.message?.content ||
-      "No hubo respuesta";
+      "No hubo respuesta del modelo.";
 
     return res.status(200).json({ reply });
-
   } catch (error) {
     return res.status(500).json({
-      error: "Error interno",
-      details: error.message,
+      error: "Error interno del servidor"
     });
   }
 }
