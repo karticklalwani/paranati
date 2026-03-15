@@ -4,10 +4,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message } = req.body || {};
+    const { messages } = req.body || {};
 
-    if (!message) {
-      return res.status(400).json({ error: "Falta el mensaje" });
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: "Faltan los mensajes" });
     }
 
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -15,17 +15,17 @@ export default async function handler(req, res) {
       headers: {
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        // opcional pero recomendado por OpenRouter
-        "HTTP-Referer": "https://tu-proyecto.vercel.app",
+        "HTTP-Referer": "https://paranati.vercel.app",
         "X-Title": "Paranati"
       },
       body: JSON.stringify({
         model: "openrouter/free",
         messages: [
           {
-            role: "user",
-            content: message
-          }
+            role: "system",
+            content: "Eres un asistente especializado en parafarmacia. Responde siempre en español, de forma clara, útil y profesional. Explica conceptos de dermocosmética, nutrición, fitoterapia, medicamentos OTC, higiene, ortopedia, puericultura y salud general sin sonar demasiado técnico. Si algo requiere diagnóstico médico o urgencia, recomienda consultar a un profesional sanitario."
+          },
+          ...messages
         ]
       })
     });
@@ -34,8 +34,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error: data?.error?.message || "Error al llamar a OpenRouter",
-        details: data
+        error: data?.error?.message || "Error al llamar a OpenRouter"
       });
     }
 
@@ -46,8 +45,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply });
   } catch (error) {
     return res.status(500).json({
-      error: "Error interno del servidor",
-      details: error.message
+      error: "Error interno del servidor"
     });
   }
 }
